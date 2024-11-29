@@ -18,7 +18,9 @@ const createMessageElement = (content, ...classes) => {
   return div;
 };
 
-const generateBotResponse = async () => {
+const generateBotResponse = async (icomingMessageDiv) => {
+const messageElement = icomingMessageDiv.querySelector(".message-text");
+
   const requestOption = {
     method: "POST",
     headers: {"Content-Type": "application/json"},
@@ -35,10 +37,12 @@ const generateBotResponse = async () => {
     
     if (!response.ok) throw new Error(data.error.message);
     
-    // Обработка данных, если ответ успешен
-    console.log(data);
+    const apiResponseText = data.candidates[0].content.parts[0].text.trim();
+    messageElement.innerText = apiResponseText;
   } catch (err) { 
     console.error(err); 
+  } finally {
+    icomingMessageDiv.classList.remove("thinking");
   }
 }
 // Обработка исходящего сообщения
@@ -79,7 +83,7 @@ const hendleOutgoingMessage = (e) => {
       "thinking"
     );
     chatBody.appendChild(icomingMessageDiv); // Добавляем сообщение в область чата
-    generateBotResponse();
+    generateBotResponse(icomingMessageDiv);
   }, 600);
 };
 
