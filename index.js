@@ -2,11 +2,14 @@
 const chatBody = document.querySelector(".chat-body");
 const messageInput = document.querySelector(".message-input");
 const sendMessageButton = document.querySelector("#send-messsage");
+const API_KEY = 'AIzaSyDAc16kI0fDg4fXbOIgpiMR_6cBGRDNe8M';
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
 // Объект для хранения данных пользователя
 const userData = {
   message: null,
 };
+
 // Функция для создания элемента сообщения
 const createMessageElement = (content, ...classes) => {
   const div = document.createElement("div");
@@ -14,6 +17,30 @@ const createMessageElement = (content, ...classes) => {
   div.innerHTML = content;
   return div;
 };
+
+const generateBotResponse = async () => {
+  const requestOption = {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      contents: [{
+        "parts": [{ text: userData.message }]
+      }]
+    })
+  };
+  
+  try {
+    const response = await fetch(API_URL, requestOption);
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.error.message);
+    
+    // Обработка данных, если ответ успешен
+    console.log(data);
+  } catch (err) { 
+    console.error(err); 
+  }
+}
 // Обработка исходящего сообщения
 /*hendleOutgoingMessage: Основная функция для обработки исходящих сообщений. Она:
 Предотвращает стандартное поведение формы.
@@ -21,7 +48,6 @@ const createMessageElement = (content, ...classes) => {
 Очищает поле ввода.
 Создает элемент для исходящего сообщения и добавляет его в чат.
 Через 600 мс добавляет "мыслящее" сообщение от бота.*/
-
 const hendleOutgoingMessage = (e) => {
   e.preventDefault(); // Предотвращаем стандартное поведение формы (если используется)
   userData.message = messageInput.value.trim(); // Получаем текст из поля ввода
@@ -53,6 +79,7 @@ const hendleOutgoingMessage = (e) => {
       "thinking"
     );
     chatBody.appendChild(icomingMessageDiv); // Добавляем сообщение в область чата
+    generateBotResponse();
   }, 600);
 };
 
