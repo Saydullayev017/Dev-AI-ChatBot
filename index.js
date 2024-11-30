@@ -37,12 +37,14 @@ const messageElement = icomingMessageDiv.querySelector(".message-text");
     
     if (!response.ok) throw new Error(data.error.message);
     
-    const apiResponseText = data.candidates[0].content.parts[0].text.trim();
+    const apiResponseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g,"$1").trim();
     messageElement.innerText = apiResponseText;
   } catch (err) { 
     console.error(err); 
   } finally {
     icomingMessageDiv.classList.remove("thinking");
+    chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"});
+
   }
 }
 // Обработка исходящего сообщения
@@ -66,7 +68,7 @@ const hendleOutgoingMessage = (e) => {
     userData.message; // Устанавливаем текст сообщения
 
   chatBody.appendChild(outgoingMessageDiv); // Добавляем сообщение в область чата
-
+  chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"});
   setTimeout(() => {
     const messageContent = `<img class="bot-avatar" src="./assets/icon.svg" width="50" height="50">
 
@@ -83,6 +85,7 @@ const hendleOutgoingMessage = (e) => {
       "thinking"
     );
     chatBody.appendChild(icomingMessageDiv); // Добавляем сообщение в область чата
+    chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"});
     generateBotResponse(icomingMessageDiv);
   }, 600);
 };
