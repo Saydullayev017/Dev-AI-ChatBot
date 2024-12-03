@@ -37,8 +37,11 @@
                 <textarea placeholder="Сообщение..." class="message-input" required></textarea>
                 <div class="chat-controls">
                     <button type="button">s</button>
-                    <button type="button">f</button>
-                    <button id="send-messsage" type="submit">a</button>
+                    <div class="file-upload-wrapper">
+                        <input type="file" accept="images/*" id="file-input" hidden>
+                        <button type="button" id="file-upload">file</button>
+                    </div>
+                    <button id="send-messsage" type="submit">send</button>
 
                 </div>
             </form>
